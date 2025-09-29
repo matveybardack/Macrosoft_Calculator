@@ -1,0 +1,90 @@
+﻿<Window x:Class="WpfAppCalculater.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfAppCalculater"
+        mc:Ignorable="d"
+        Title="Калькулятор"
+        Height="635"
+        Width="478"
+        WindowStyle="ThreeDBorderWindow"
+        FontFamily="Times New Roman"
+        FontSize="14"
+        Background="#FAFAFA">
+    <TabControl>
+        <TabItem Header="Калькулятор">
+            <Grid Margin="12">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="12" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBox x:Name="Display"
+                         Grid.Row="0"
+                         FontSize="28"
+                         HorizontalContentAlignment="Right"
+                         VerticalContentAlignment="Center"
+                         IsReadOnly="True"
+                         Text="0"
+                         Background="White"
+                         Foreground="#222"
+                         BorderBrush="#CCC"
+                         BorderThickness="1"
+                         Padding="12"
+                         Grid.RowSpan="2" />
+
+                <UniformGrid Grid.Row="2"
+                             Columns="4"
+                             Rows="5"
+                             Margin="0">
+                    <Button Content="7"
+                            Click="OnDigitClick" />
+                    <Button Content="8"
+                            Click="OnDigitClick" />
+                    <Button Content="9"
+                            Click="OnDigitClick" />
+                    <Button Content="/"
+                            Click="OnOperatorClick" />
+
+                    <Button Content="4"
+                            Click="OnDigitClick" />
+                    <Button Content="5"
+                            Click="OnDigitClick" />
+                    <Button Content="6"
+                            Click="OnDigitClick" />
+                    <Button Content="*"
+                            Click="OnOperatorClick" />
+
+                    <Button Content="1"
+                            Click="OnDigitClick" />
+                    <Button Content="2"
+                            Click="OnDigitClick" />
+                    <Button Content="3"
+                            Click="OnDigitClick" />
+                    <Button Content="-"
+                            Click="OnOperatorClick" />
+
+                    <Button Content="0"
+                            Click="OnDigitClick" />
+                    <Button Content=","
+                            Click="OnDecimalClick" />
+                    <Button Content="C"
+                            Click="OnClearClick" />
+                    <Button Content="+"
+                            Click="OnOperatorClick" />
+
+                    <Button Grid.ColumnSpan="4"
+                            Content="="
+                            Click="OnEqualsClick" />
+                </UniformGrid>
+            </Grid>
+        </TabItem>
+        <TabItem Header="История">
+            <Grid Margin="12">
+                <ListBox x:Name="HistoryList" />
+            </Grid>
+        </TabItem>
+    </TabControl>
+</Window>
