@@ -22,7 +22,7 @@ namespace WpfAppCalculater
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly Calculate _calculator = new Calculate();
+        private readonly CalculatorService _calculator = new CalculatorService();
         private readonly CultureInfo _culture = CultureInfo.CurrentCulture;
 
         private string _currentInput = "0";
@@ -36,6 +36,9 @@ namespace WpfAppCalculater
             UpdateDisplay();
         }
 
+        /// <summary>
+        /// Обновление экрана калькулятора
+        /// </summary>
         private void UpdateDisplay()
         {
             if (Display == null)
@@ -43,13 +46,10 @@ namespace WpfAppCalculater
                 return;
             }
 
-            // When an operator is pending and we're entering the right operand,
-            // show the full expression like "56+5". After equals, show only the result.
             if (_pendingOperator != null && !_justCalculated)
             {
                 if (_storedValue.HasValue)
                 {
-                    // Avoid showing trailing 0 immediately after operator press
                     if (_currentInput == "0")
                     {
                         Display.Text = string.Format(_culture, "{0}{1}", _storedValue.Value, _pendingOperator);
@@ -65,6 +65,11 @@ namespace WpfAppCalculater
             Display.Text = _currentInput;
         }
 
+        /// <summary>
+        /// Нажатие на число
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnDigitClick(object sender, RoutedEventArgs e)
         {
             if (sender is Button button)
@@ -90,6 +95,11 @@ namespace WpfAppCalculater
             }
         }
 
+        /// <summary>
+        /// Нажатие на запятую
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnDecimalClick(object sender, RoutedEventArgs e)
         {
             string sep = _culture.NumberFormat.NumberDecimalSeparator;
@@ -107,6 +117,11 @@ namespace WpfAppCalculater
             }
         }
 
+        /// <summary>
+        /// Нажатие на знак операции
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnOperatorClick(object sender, RoutedEventArgs e)
         {
             if (sender is Button button)
@@ -117,7 +132,6 @@ namespace WpfAppCalculater
                 {
                     if (_storedValue.HasValue && _pendingOperator != null && !_justCalculated)
                     {
-                        // Chain operation: compute previous before setting new operator
                         Compute(value);
                     }
                     else
@@ -133,6 +147,11 @@ namespace WpfAppCalculater
             }
         }
 
+        /// <summary>
+        /// Надатие на знак "равно" 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnEqualsClick(object sender, RoutedEventArgs e)
         {
             if (!_storedValue.HasValue || string.IsNullOrEmpty(_pendingOperator))
@@ -168,6 +187,11 @@ namespace WpfAppCalculater
             }
         }
 
+        /// <summary>
+        /// Вычисление операции
+        /// </summary>
+        /// <param name="right">правый операнд</param>
+        /// <returns></returns>
         private double Compute(double right)
         {
             if (!_storedValue.HasValue || string.IsNullOrEmpty(_pendingOperator))
@@ -202,6 +226,11 @@ namespace WpfAppCalculater
             return result;
         }
 
+        /// <summary>
+        /// Нажатие на "С"
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnClearClick(object sender, RoutedEventArgs e)
         {
             ClearAll();
