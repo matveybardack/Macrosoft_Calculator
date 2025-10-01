@@ -153,7 +153,7 @@ namespace WpfAppCalculater
 
                 string historyEntry = string.Format(_culture, "{0} {1} {2} = {3}",
                     left, _pendingOperator, right, result);
-                HistoryList?.Items.Add(historyEntry);
+                HistoryList?.Items.Insert(0, historyEntry);
 
                 _currentInput = result.ToString(_culture);
                 _storedValue = null;
