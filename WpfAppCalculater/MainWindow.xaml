@@ -5,7 +5,9 @@
         Height="650"
         Width="480"
         Background="#F3F4F6"
-        WindowStyle="SingleBorderWindow">
+        WindowStyle="SingleBorderWindow"
+        MinHeight="650"
+        MinWidth="480">
 
     <Window.Resources>
         <!-- Стиль для кнопок -->
@@ -75,9 +77,9 @@
         <TabItem Header="Калькулятор">
             <Grid Margin="12">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="12"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="12" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <!-- Дисплей -->
@@ -95,40 +97,68 @@
                          BorderThickness="2"
                          Padding="12"
                          Height="80"
-                         Margin="0,0,0,10"/>
+                         Margin="0,0,0,10" />
 
                 <!-- Кнопки -->
-                <UniformGrid Grid.Row="2" Columns="4" Rows="5">
+                <UniformGrid Grid.Row="2"
+                             Columns="4"
+                             Rows="5">
                     <!-- Первая строка -->
-                    <Button Content="7" Click="OnDigitClick"/>
-                    <Button Content="8" Click="OnDigitClick"/>
-                    <Button Content="9" Click="OnDigitClick"/>
-                    <Button Content="/" Style="{StaticResource OperatorButton}" Click="OnOperatorClick"/>
+                    <Button Content="7"
+                            Click="OnDigitClick" />
+                    <Button Content="8"
+                            Click="OnDigitClick" />
+                    <Button Content="9"
+                            Click="OnDigitClick" />
+                    <Button Content="/"
+                            Style="{StaticResource OperatorButton}"
+                            Click="OnOperatorClick" />
 
                     <!-- Вторая строка -->
-                    <Button Content="4" Click="OnDigitClick"/>
-                    <Button Content="5" Click="OnDigitClick"/>
-                    <Button Content="6" Click="OnDigitClick"/>
-                    <Button Content="*" Style="{StaticResource OperatorButton}" Click="OnOperatorClick"/>
+                    <Button Content="4"
+                            Click="OnDigitClick" />
+                    <Button Content="5"
+                            Click="OnDigitClick" />
+                    <Button Content="6"
+                            Click="OnDigitClick" />
+                    <Button Content="*"
+                            Style="{StaticResource OperatorButton}"
+                            Click="OnOperatorClick" />
 
                     <!-- Третья строка -->
-                    <Button Content="1" Click="OnDigitClick"/>
-                    <Button Content="2" Click="OnDigitClick"/>
-                    <Button Content="3" Click="OnDigitClick"/>
-                    <Button Content="-" Style="{StaticResource OperatorButton}" Click="OnOperatorClick"/>
+                    <Button Content="1"
+                            Click="OnDigitClick" />
+                    <Button Content="2"
+                            Click="OnDigitClick" />
+                    <Button Content="3"
+                            Click="OnDigitClick" />
+                    <Button Content="-"
+                            Style="{StaticResource OperatorButton}"
+                            Click="OnOperatorClick" />
 
                     <!-- Четвертая строка -->
-                    <Button Content="0" Click="OnDigitClick"/>
-                    <Button Content="," Click="OnDecimalClick"/>
-                    <Button Content="C" Foreground="Red" Click="OnClearClick"/>
-                    <Button Content="+" Style="{StaticResource OperatorButton}" Click="OnOperatorClick"/>
+                    <Button Content="0"
+                            Click="OnDigitClick" />
+                    <Button Content=","
+                            Click="OnDecimalClick" />
+                    <Button Content="C"
+                            Foreground="Red"
+                            Click="OnClearClick" />
+                    <Button Content="+"
+                            Style="{StaticResource OperatorButton}"
+                            Click="OnOperatorClick" />
 
                     <!-- Пятая строка -->
-                    <Button Content="=" Style="{StaticResource EqualsButton}" Grid.ColumnSpan="4" Click="OnEqualsClick"/>
+                    <Button Content="="
+                            Style="{StaticResource EqualsButton}"
+                            Grid.ColumnSpan="4"
+                            Click="OnEqualsClick" />
+                    <Button Content="±"
+                            Style="{StaticResource OperatorButton}"
+                            Click="NegateButton_Click" />
                 </UniformGrid>
             </Grid>
         </TabItem>
-
         <!-- Вкладка истории -->
         <TabItem Header="История">
             <Grid Margin="12">

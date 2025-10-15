@@ -58,5 +58,15 @@ namespace ClassLibraryCalculater
 
             return dividend / divisor;
         }
+
+        /// <summary>
+        /// Изменяет знак числа
+        /// </summary>
+        /// <param name="value">число</param>
+        /// <returns>число с противоположным знаком</returns>
+        public double Negate(double value)
+        {
+            return -value;
+        }
     }
 }

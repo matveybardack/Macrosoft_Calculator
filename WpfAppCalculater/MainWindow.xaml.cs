@@ -29,6 +29,9 @@ namespace WpfAppCalculater
         private double? _storedValue = null;
         private string _pendingOperator = null;
         private bool _justCalculated = false;
+        private bool _isFractionInput = false;
+        private string _numeratorPart = "";
+        private string _denominatorPart = "";
 
         public MainWindow()
         {
@@ -42,22 +45,29 @@ namespace WpfAppCalculater
         private void UpdateDisplay()
         {
             if (Display == null)
-            {
                 return;
-            }
 
             if (_pendingOperator != null && !_justCalculated)
-            {
                 if (_storedValue.HasValue)
                 {
-                    if (_currentInput == "0")
+                    string displayRightOperand = _currentInput;
+                    if (displayRightOperand.StartsWith("-") && displayRightOperand != "0")
                     {
-                        Display.Text = string.Format(_culture, "{0}{1}", _storedValue.Value, _pendingOperator);
+                        displayRightOperand = $"({displayRightOperand})";
                     }
-                    else
-                    {
-                        Display.Text = string.Format(_culture, "{0}{1}{2}", _storedValue.Value, _pendingOperator, _currentInput);
-                    }
+
+                    Display.Text = string.Format(_culture, "{0} {1} {2}",
+                        _storedValue.Value, _pendingOperator, displayRightOperand);
+                    return;
+                }
+
+            // Отображаем дробь в специальном формате
+            if (_isFractionInput && _currentInput.Contains("/"))
+            {
+                string[] parts = _currentInput.Split('/');
+                if (parts.Length == 2)
+                {
+                    Display.Text = $"{parts[0]}\n―\n{parts[1]}";
                     return;
                 }
             }
@@ -65,11 +75,6 @@ namespace WpfAppCalculater
             Display.Text = _currentInput;
         }
 
-        /// <summary>
-        /// Нажатие на число
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void OnDigitClick(object sender, RoutedEventArgs e)
         {
             if (sender is Button button)
@@ -80,26 +85,34 @@ namespace WpfAppCalculater
                 {
                     _currentInput = "0";
                     _justCalculated = false;
+                    _isFractionInput = false;
+                    _numeratorPart = "";
+                    _denominatorPart = "";
                 }
 
-                if (_currentInput == "0")
+                if (_isFractionInput)
                 {
-                    _currentInput = digit;
+                    // Ввод в знаменатель
+                    _denominatorPart += digit;
+                    _currentInput = _numeratorPart + "/" + _denominatorPart;
                 }
                 else
                 {
-                    _currentInput += digit;
+                    // Обычный ввод
+                    if (_currentInput == "0")
+                    {
+                        _currentInput = digit;
+                    }
+                    else
+                    {
+                        _currentInput += digit;
+                    }
                 }
 
                 UpdateDisplay();
             }
         }
 
-        /// <summary>
-        /// Нажатие на запятую
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void OnDecimalClick(object sender, RoutedEventArgs e)
         {
             string sep = _culture.NumberFormat.NumberDecimalSeparator;
@@ -108,12 +121,29 @@ namespace WpfAppCalculater
             {
                 _currentInput = "0";
                 _justCalculated = false;
+                _isFractionInput = false;
+                _numeratorPart = "";
+                _denominatorPart = "";
             }
 
-            if (!_currentInput.Contains(sep))
+            if (_isFractionInput)
             {
-                _currentInput += sep;
-                UpdateDisplay();
+                // Десятичная точка для знаменателя
+                if (!_denominatorPart.Contains(sep))
+                {
+                    _denominatorPart += sep;
+                    _currentInput = _numeratorPart + "/" + _denominatorPart;
+                    UpdateDisplay();
+                }
+            }
+            else
+            {
+                // Обычный ввод
+                if (!_currentInput.Contains(sep))
+                {
+                    _currentInput += sep;
+                    UpdateDisplay();
+                }
             }
         }
 
@@ -132,7 +162,16 @@ namespace WpfAppCalculater
                 {
                     if (_storedValue.HasValue && _pendingOperator != null && !_justCalculated)
                     {
-                        Compute(value);
+                        if (_currentInput == "0")
+                        {
+                            _pendingOperator = op;
+                            UpdateDisplay();
+                            return;
+                        }
+                        else
+                        {
+                            Compute(value);
+                        }
                     }
                     else
                     {
@@ -185,6 +224,85 @@ namespace WpfAppCalculater
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 ClearAll();
             }
+        }
+
+        private void NegateButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Если есть ожидающая операция (значит работаем с правым операндом)
+                if (_pendingOperator != null && !_justCalculated)
+                {
+                    // Если текущий ввод уже содержит отрицательное число
+                    if (_currentInput.StartsWith("-") && _currentInput != "0")
+                    {
+                        // Убираем минус
+                        _currentInput = _currentInput.Substring(1);
+                        if (string.IsNullOrEmpty(_currentInput)) _currentInput = "0";
+                    }
+                    else if (_currentInput == "0")
+                    {
+                        // Для нуля просто ставим минус
+                        _currentInput = "-";
+                    }
+                    else
+                    {
+                        // Добавляем минус в начало
+                        _currentInput = "-" + _currentInput;
+                    }
+                }
+                else
+                {
+                    // Работаем с левым операндом или одиночным числом
+                    if (double.TryParse(_currentInput, NumberStyles.Float, _culture, out double currentValue))
+                    {
+                        double result = _calculator.Negate(currentValue);
+                        _currentInput = result.ToString(_culture);
+                    }
+                }
+
+                UpdateDisplay();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void OnFractionClick(object sender, RoutedEventArgs e)
+        {
+            if (_isFractionInput)
+            {
+                // Завершение ввода дроби
+                if (!string.IsNullOrEmpty(_numeratorPart) && !string.IsNullOrEmpty(_denominatorPart))
+                {
+                    if (double.TryParse(_numeratorPart, NumberStyles.Float, _culture, out double numerator) &&
+                        double.TryParse(_denominatorPart, NumberStyles.Float, _culture, out double denominator) &&
+                        denominator != 0)
+                    {
+                        double fractionValue = numerator / denominator;
+                        _currentInput = fractionValue.ToString(_culture);
+                    }
+                    else
+                    {
+                        _currentInput = "0";
+                    }
+                }
+
+                _isFractionInput = false;
+                _numeratorPart = "";
+                _denominatorPart = "";
+            }
+            else
+            {
+                // Начинаем ввод дроби
+                _isFractionInput = true;
+                _numeratorPart = _currentInput == "0" ? "" : _currentInput;
+                _denominatorPart = "";
+                _currentInput = _numeratorPart + "/";
+            }
+
+            UpdateDisplay();
         }
 
         /// <summary>
@@ -242,6 +360,9 @@ namespace WpfAppCalculater
             _storedValue = null;
             _pendingOperator = null;
             _justCalculated = false;
+            _isFractionInput = false;
+            _numeratorPart = "";
+            _denominatorPart = "";
             UpdateDisplay();
         }
     }

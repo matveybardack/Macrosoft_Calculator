@@ -30,6 +30,13 @@ namespace WpfAppCalculater
         {
             return Calculator.Divide(left, right);
         }
+
+        public double Negate(double value)
+        {
+            return Calculator.Negate(value);
+        }
+
+
         public CalculatorService() {
             Calculator = new Calculate();
         }

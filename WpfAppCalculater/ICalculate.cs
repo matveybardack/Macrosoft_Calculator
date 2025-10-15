@@ -23,5 +23,8 @@ namespace WpfAppCalculater
 
         // Деление
         double Divide(double left, double right);
+
+        // Изменение знака числа
+        double Negate(double value);
     }
 }
